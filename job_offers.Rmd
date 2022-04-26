@@ -12,9 +12,80 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-job_offers = read.csv(file = "jobdata.csv", header=TRUE)
+
+job_offers = read.csv(file = "jobdata.csv", sep = ",", header = TRUE,comment.char = "") #Import data **name it as jobdata.csv for this                                                                                           to work
+
+job_offers[is.na(job_offers)] = 0  # Turns the NA cells into 0. These cells are 0, and they're under the "salary" column, for those                                         who did NOT get a job
+
+job_offers   #Just so we can see what we're working with
+
+job_offers = job_offers[ , -1 ]  # Removing the first column, the index of the individual is not a variable
+
+job_offers #Seeing what the data looks like again
+
+```
+
+
+
+
+
+```{r}
+library(tidyverse)
+
+# Turning binary characters into 0/1
+
+job_offers$gender = ifelse(job_offers$gender == "M", 0, 1) #if male, then M = 0; if female, then F = 1
+
+job_offers$ssc_b = ifelse(job_offers$ssc_b == "Others", 0, 1) #if others, others = o; if Central, Central = 1
+
+job_offers$hsc_b = ifelse(job_offers$hsc_b == "Others", 0, 1) #if others, others = o; if Central, Central = 1
+
+job_offers$workex = ifelse(job_offers$workex == "No", 0, 1)  #if workex = no, workex = 0; if workex = yes, workex = 1
+
+
+## These 3 columns need to be turned into numerics maybe some other way. All I coiuld figure out was the binary application
+
+job_offers$hsc_s = ifelse(job_offers$hsc_s == "Science", 0, 1) # Science = 0, Commerce/Arts = 1
+
+job_offers$degree_t = ifelse(job_offers$degree_t == "Sci&Tech", 0, 1)  # Sci&Tech = 0, others = 1
+
+job_offers$specialisation = ifelse(job_offers$specialisation == "Mkt&Fin", 0, 1) #Mkt&Fin = 0, others = 1
+
+#Doing this column as an integer just to see the pairs
+job_offers$status = ifelse(job_offers$status == "Not Placed", 0, 1) #Not placed = 0, placed = 1
+
+# ______________________________________________
+
+summary(job_offers)
+
+corr(job_offers)
+pairs(job_offers)
+
+```
+
+
+```{r}
+
+# Re-defining the observation to be a factor, so we can process the data
+#Renaming the values for job status, so it's easy to interpret later on
+
+job_offers$status[job_offers$status == "Not Placed"] = "No Job Offer"
+job_offers$status[job_offers$status == "Placed"] = "Job Offer"
+job_offers$status= as.factor(job_offers$status)
+
+## The Model Can Start Here!
+
+
 
 
 
 
 ```
+
+
+
+
+
+
+
+
